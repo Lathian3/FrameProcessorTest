@@ -1,5 +1,4 @@
-let LegoColorTable = new Map();
-
+var LegoColorTable = new Map();
 LegoColorTable.set(0x720E0F, "Dark Red");
 LegoColorTable.set(0x631314, "HO Dark Red");
 LegoColorTable.set(0xFEBABD, "Light Salmon");
@@ -226,92 +225,81 @@ LegoColorTable.set(0xD9D9D9, "Glow in Dark White");
 LegoColorTable.set(0x9C9C9C, "Modulex Light Gray");
 LegoColorTable.set(0x616161, "HO Titanium");
 LegoColorTable.set(0x5e5e5e, "HO Metallic Dark Gray");
-
-const legoColors = LegoColorTable.keys();
-const sortByRed = Array.from(legoColors);
-
-sortByRed.sort((a,b) => {
+var legoColors = LegoColorTable.keys();
+var sortByRed = Array.from(legoColors);
+sortByRed.sort(function (a, b) {
     return (a & 0xFF0000) - (b & 0xFF0000);
-})
-
-let ColorTree = new Array;
-
-let lastColor = -1;
-let Count = -1;
-sortByRed.forEach((color) => {
-    if(lastColor !== (color & 0xFF0000)){
+});
+var ColorTree = new Array;
+var lastColor = -1;
+var Count = -1;
+sortByRed.forEach(function (color) {
+    if (lastColor !== (color & 0xFF0000)) {
         Count++;
         ColorTree[Count] = new Array;
         ColorTree[Count].push(color & 0xFF0000);
-        lastColor = (color & 0xFF0000)
+        lastColor = (color & 0xFF0000);
     }
-ColorTree[Count].push(color);
+    ColorTree[Count].push(color);
 });
-
-ColorTree.forEach((arr) =>{
-    let firstElement = arr.shift();
-    arr.sort((a : number,b : number) => {
+ColorTree.forEach(function (arr) {
+    var firstElement = arr.shift();
+    arr.sort(function (a, b) {
         return (a & 0x00FF00) - (b & 0x00FF00);
-    })
+    });
     arr.unshift(firstElement);
-})
-
-let original_length = -1;
-
-ColorTree.forEach((arr) => {
-    let redIdentifier = arr.shift();
+});
+var original_length = -1;
+ColorTree.forEach(function (arr) {
+    var redIdentifier = arr.shift();
     lastColor = -1;
     original_length = arr.length;
     Count = original_length - 1;
-    for(let i = 0; i < original_length; i++){
-        if(lastColor !== (arr[i] & 0x00FF00)){
+    for (var i = 0; i < original_length; i++) {
+        if (lastColor !== (arr[i] & 0x00FF00)) {
             Count++;
             arr[Count] = new Array;
             arr[Count].push(arr[i] & 0x00FF00);
-            lastColor = (arr[i] & 0x00FF00)
+            lastColor = (arr[i] & 0x00FF00);
         }
-    arr[Count].push(arr[i]);
+        arr[Count].push(arr[i]);
     }
-    arr.splice(0,original_length);
+    arr.splice(0, original_length);
     arr.unshift(redIdentifier);
-})
-
-let r = Math.floor((Math.random() * 255));
-let g = Math.floor((Math.random() * 255));
-let b = Math.floor((Math.random() * 255));
-
-let userColor = (((r << 8) | g) << 8) | b;
-
-let diff = Number.MAX_SAFE_INTEGER;
-let currentDiff = -1;
-let closestRed = -1;
-for(let i = 0; i < ColorTree.length; i++){
-    currentDiff = Math.abs((userColor & 0xFF0000) - ColorTree[i][0]); 
-    if(currentDiff < diff){
+});
+var r = Math.floor((Math.random() * 255));
+var g = Math.floor((Math.random() * 255));
+var b = Math.floor((Math.random() * 255));
+var userColor = (((r << 8) | g) << 8) | b;
+var diff = Number.MAX_SAFE_INTEGER;
+var currentDiff = -1;
+var closestRed = -1;
+for (var i = 0; i < ColorTree.length; i++) {
+    currentDiff = Math.abs((userColor & 0xFF0000) - ColorTree[i][0]);
+    if (currentDiff < diff) {
         diff = currentDiff;
         closestRed = i;
     }
 }
 diff = Number.MAX_SAFE_INTEGER;
-let closestGreen = -1;
-for(let i = 1; i < ColorTree[closestRed].length; i++){
+var closestGreen = -1;
+for (var i = 1; i < ColorTree[closestRed].length; i++) {
     currentDiff = Math.abs((userColor & 0x00FF00) - ColorTree[closestRed][i][0]);
-    if(currentDiff < diff){
+    if (currentDiff < diff) {
         diff = currentDiff;
         closestGreen = i;
     }
 }
 diff = Number.MAX_SAFE_INTEGER;
-let closestLegoColor = -1;
-for(let i = 1; i < ColorTree[closestRed][closestGreen].length; i++){
+var closestLegoColor = -1;
+for (var i = 1; i < ColorTree[closestRed][closestGreen].length; i++) {
     currentDiff = Math.abs((userColor & 0x0000FF) - (ColorTree[closestRed][closestGreen][i] & 0x0000FF ));
-    if(currentDiff < diff){
+    if (currentDiff < diff) {
         diff = currentDiff;
         closestLegoColor = ColorTree[closestRed][closestGreen][i];
     }
 }
-
-console.log(`The user color was: ${userColor}`);
-console.log(`The closest Lego color value was: ${closestLegoColor}`);
-let LegoName = LegoColorTable.get(closestLegoColor);
-console.log(`The name of the Lego color is: ${LegoName}`);
+console.log("The user color was: ".concat(userColor));
+console.log("The closest Lego color value was: ".concat(closestLegoColor));
+var LegoName = LegoColorTable.get(closestLegoColor);
+console.log("The name of the Lego color is: ".concat(LegoName));
