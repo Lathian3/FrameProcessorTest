@@ -29,10 +29,27 @@ export default function Index() {
     'worklet'
     const buffer = frame.toArrayBuffer();
     const data = new Uint8Array(buffer);
-    for(let i = 0; i < 30; i += 3){
-      console.log(`${data[i]} ${data[i+1]} ${data[i+2]}`)
-    }
-    console.log(`Frame: ${frame.width}x${frame.height} (${frame.pixelFormat})`)
+    const length = buffer.byteLength;
+    
+    let y = data[1036799]
+    let u = data[3000000]
+    let v = data[2332799]
+    /*
+    const r = y + 1.14 * v;
+    const g = y - 0.395 * u - 0.581 * v;
+    const b = y + 2.032 * u;
+    */
+    y -= 16;
+    u -= 128;
+    v -= 128;
+    const r = 1.164 * y + 1.596 * v;
+    const g = 1.164 * y - 0.392 * u - 0.813 * v;
+    const b = 1.164 * y + 2.017 * u;
+
+    console.log(`YUV: ${y+16}, ${u+128}, ${v+128}`);
+    console.log(`RGB: ${r}, ${g}, ${b}`);
+    console.log(`${frame.height} ${frame.width}`);
+    
   }, [])
 
   return (
